@@ -1,0 +1,433 @@
+
+<!DOCTYPE html>
+<html lang="hr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#10120f">
+<title>BUKSA LEAGUE</title>
+<style>
+:root{--bg:#10120f;--panel:#191d17;--line:#353c30;--green:#b7f34a;--muted:#a1a99a;--white:#f5f6f0}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--white);font:15px system-ui,sans-serif}
+header{padding:25px 18px;background:linear-gradient(120deg,#26351a,#10120f);border-bottom:1px solid var(--line)}
+main{max-width:1000px;margin:auto;padding:18px 12px 50px}
+.wrap{max-width:1000px;margin:auto}
+.brand{font-size:12px;letter-spacing:4px;color:var(--green);font-weight:900}
+h1{font-size:clamp(30px,6vw,45px);margin:6px 0}
+h2{font-size:21px;margin:0 0 16px}
+h3{font-size:16px;margin:0 0 10px}
+p,.muted{color:var(--muted);line-height:1.5}
+.panel{padding:18px;border:1px solid var(--line);background:var(--panel);border-radius:15px;margin-bottom:15px}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+label{display:block;color:var(--muted);font-size:13px;margin:10px 0 6px}
+input,select{width:100%;padding:12px;background:#10120f;color:var(--white);border:1px solid var(--line);border-radius:9px}
+button{cursor:pointer;border:0;border-radius:9px;padding:11px 14px;font-weight:750}
+button:disabled{opacity:.4;cursor:default}
+.primary{background:var(--green);color:#14180e}
+.secondary{background:#252b21;color:var(--white);border:1px solid var(--line)}
+.danger{background:#402020;color:#ffb4b4}
+.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+.hidden{display:none!important}
+.notice{background:#222d19;border:1px solid #4c6531;padding:12px;border-radius:10px;line-height:1.5}
+.status{font-size:13px;color:var(--muted);margin:10px 0}
+.player-row{display:flex;gap:8px;margin:7px 0;align-items:center}
+.player-row span{width:25px;color:var(--muted)}
+.player-row button{padding:9px}
+.tabs{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:14px}
+.tab{background:#252b21;color:var(--muted)}
+.tab.active{background:var(--green);color:#14180e}
+.match-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.match{background:#11140f;border:1px solid var(--line);padding:13px;border-radius:11px;min-width:0}
+.match small{color:var(--muted)}
+.pick{display:flex;justify-content:space-between;gap:8px;width:100%;margin-top:8px;text-align:left;background:#252b21;color:var(--white);border:1px solid var(--line);overflow-wrap:anywhere}
+.pick.winner{color:var(--green);border-color:var(--green)}
+.group{border:1px solid var(--line);border-radius:12px;padding:13px;margin:12px 0}
+table{width:100%;border-collapse:collapse;font-size:13px}
+td,th{text-align:left;padding:9px 5px;border-bottom:1px solid var(--line)}
+th{color:var(--muted)}
+.history{padding:12px 0;border-bottom:1px solid var(--line)}
+.small{font-size:12px;color:var(--muted)}
+a{color:var(--green);overflow-wrap:anywhere}
+@media(max-width:600px){.grid,.match-list{grid-template-columns:1fr}.panel{padding:14px}}
+</style>
+</head>
+<body>
+<header><div class="wrap">
+  <div class="brand">PRIVATE DARTS TOURNAMENTS</div>
+  <h1>BUKSA <span style="color:var(--green)">LEAGUE</span></h1>
+  <div class="muted">Tvoja ekipa. Tvoj turnir. Tvoja pravila.</div>
+</div></header>
+
+<main>
+  <div id="status" class="status">Povezivanje s bazom...</div>
+
+  <section id="login" class="panel hidden">
+    <h2>Organizatorska prijava</h2>
+    <p>Prijavi se svojim računom koji si već napravio u Supabaseu.</p>
+    <label for="email">E-mail</label>
+    <input id="email" type="email" autocomplete="username" placeholder="Tvoj e-mail">
+    <label for="password">Lozinka</label>
+    <input id="password" type="password" autocomplete="current-password" placeholder="Lozinka">
+    <div class="actions"><button id="loginBtn" class="primary">Prijavi se</button></div>
+    <div id="loginError" class="status"></div>
+  </section>
+
+  <section id="organizer" class="hidden">
+    <div class="panel">
+      <div style="display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap">
+        <div><div class="brand">ORGANIZATOR</div><div id="signedEmail" class="small"></div></div>
+        <button id="logoutBtn" class="secondary">Odjava</button>
+      </div>
+    </div>
+
+    <section id="setup" class="panel">
+      <h2>Novi turnir</h2>
+      <label for="tName">Naziv turnira</label>
+      <input id="tName" maxlength="60" value="Buksa League">
+      <div class="grid">
+        <div><label for="game">Igra</label>
+          <select id="game"><option>301</option><option>Cricket</option></select></div>
+        <div><label for="format">Format</label>
+          <select id="format"><option value="knockout">Direktan nasumični ždrijeb + nokaut</option>
+          <option value="groups">Skupine + nokaut</option></select></div>
+        <div><label for="count">Broj igrača</label><select id="count"></select></div>
+      </div>
+      <h3 style="margin-top:20px">Igrači</h3>
+      <div id="players"></div>
+      <div class="actions">
+        <button id="shuffle" class="secondary">Promiješaj imena</button>
+        <button id="create" class="primary">＋ Stvori turnir</button>
+      </div>
+      <p class="small">Skupine + nokaut zahtijeva najmanje 4 igrača. Rezultati se spremaju online.</p>
+    </section>
+
+    <section class="panel">
+      <h2>Moji turniri</h2>
+      <div id="myTournaments" class="muted">Učitavanje...</div>
+    </section>
+  </section>
+
+  <section id="viewer" class="hidden">
+    <div class="panel">
+      <div class="brand">TURNIR UŽIVO</div>
+      <h2 id="eventName">BUKSA LEAGUE</h2>
+      <div id="eventInfo" class="muted"></div>
+      <div class="actions"><button id="copyLink" class="secondary">Kopiraj poveznicu</button>
+      <button id="refresh" class="secondary">Osvježi rezultate</button></div>
+      <div id="shareUrl" class="small" style="margin-top:10px"></div>
+    </div>
+    <div class="tabs">
+      <button class="tab active" data-view="matches">Utakmice</button>
+      <button class="tab" data-view="standings">Poredak</button>
+    </div>
+    <div id="matchesView"></div>
+    <div id="standingsView" class="hidden"></div>
+    <div id="viewerNote" class="small"></div>
+  </section>
+  <footer class="small" style="text-align:center;padding:18px">BUKSA LEAGUE · Online turniri</footer>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+const SUPABASE_URL = "https://hcijdrbkyuygxpagxrli.supabase.co";
+const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_FTTeccIJBTI0ceMqilButA_2zHkCo-7";
+
+const $ = id => document.getElementById(id);
+const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
+
+let user = null, current = null, names = [], publicMode = false;
+let refreshTimer = null, view = "matches";
+
+function esc(v) {
+  return String(v ?? "").replace(/[&<>"']/g, c =>
+    ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+}
+function say(s) { $("status").textContent = s; }
+function show(el, yes=true) { $(el).classList.toggle("hidden", !yes); }
+
+for (let i=1;i<=16;i++) {
+  const o=document.createElement("option");
+  o.value=i; o.textContent=i; $("count").appendChild(o);
+}
+$("count").value=8;
+function renderInputs() {
+  const n=Number($("count").value);
+  $("players").innerHTML="";
+  for(let i=0;i<n;i++) {
+    const row=document.createElement("div");
+    row.className="player-row";
+    row.innerHTML=`<span>${i+1}.</span><input maxlength="40" value="${esc(names[i]||"Igrač "+(i+1))}" aria-label="Igrač ${i+1}">`;
+    row.querySelector("input").addEventListener("input",e=>names[i]=e.target.value);
+    $("players").appendChild(row);
+  }
+}
+names=Array.from({length:16},(_,i)=>"Igrač "+(i+1));
+$("count").addEventListener("change",()=>{
+  const old=[...$("players").querySelectorAll("input")].map(x=>x.value);
+  names=Array.from({length:16},(_,i)=>old[i]||"Igrač "+(i+1));
+  renderInputs();
+});
+renderInputs();
+
+function shuffle(arr) {
+  arr=[...arr];
+  for(let i=arr.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[arr[i],arr[j]]=[arr[j],arr[i]];}
+  return arr;
+}
+$("shuffle").onclick=()=>{
+  const old=[...$("players").querySelectorAll("input")].map(x=>x.value);
+  names=shuffle(old).concat(names.slice(old.length));
+  renderInputs();
+};
+
+function makeBracket(players) {
+  const n=players.length;
+  let size=2; while(size<n)size*=2;
+  const slots=shuffle(players).concat(Array(size-n).fill(null));
+  const rounds=[];
+  const first=[];
+  for(let i=0;i<size;i+=2){
+    const m={id:"r0m"+first.length,a:slots[i],b:slots[i+1],winner:null};
+    if(m.a&&!m.b)m.winner=m.a;
+    if(!m.a&&m.b)m.winner=m.b;
+    first.push(m);
+  }
+  rounds.push(first);
+  let count=size/4,r=1;
+  while(count>=1){
+    rounds.push(Array.from({length:count},(_,i)=>({id:"r"+r+"m"+i,a:null,b:null,winner:null})));
+    count=Math.floor(count/2);r++;
+  }
+  propagate(rounds,0);
+  return rounds;
+}
+function propagate(rounds,from) {
+  for(let r=from+1;r<rounds.length;r++){
+    rounds[r].forEach((m,i)=>{
+      m.a=rounds[r-1][i*2]?.winner||null;
+      m.b=rounds[r-1][i*2+1]?.winner||null;
+      m.winner=null;
+      if(m.a&&!m.b)m.winner=m.a;
+      if(!m.a&&m.b)m.winner=m.b;
+    });
+  }
+}
+function makeGroups(players) {
+  const shuffled=shuffle(players);
+  const n=Math.ceil(players.length/4);
+  const groups=Array.from({length:n},(_,i)=>({name:"Skupina "+String.fromCharCode(65+i),players:[],matches:[]}));
+  shuffled.forEach((p,i)=>groups[i%n].players.push(p));
+  groups.forEach((g,gi)=>{
+    for(let i=0;i<g.players.length;i++)for(let j=i+1;j<g.players.length;j++){
+      g.matches.push({id:"g"+gi+"m"+g.matches.length,a:g.players[i],b:g.players[j],winner:null});
+    }
+  });
+  return groups;
+}
+function makeTournamentData(playerList,format) {
+  return {
+    players:playerList, groups:format==="groups"?makeGroups(playerList):[],
+    bracket:format==="knockout"?makeBracket(playerList):[], champion:null
+  };
+}
+function standings(g) {
+  const list=g.players.map(name=>({name,played:0,wins:0,losses:0}));
+  g.matches.forEach(m=>{
+    if(!m.winner)return;
+    const a=list.find(p=>p.name===m.a),b=list.find(p=>p.name===m.b);
+    if(!a||!b)return;
+    a.played++;b.played++;
+    if(m.winner===a.name){a.wins++;b.losses++;}else{b.wins++;a.losses++;}
+  });
+  return list.sort((a,b)=>b.wins-a.wins||a.losses-b.losses||a.name.localeCompare(b.name));
+}
+function groupsDone() {
+  return current.data.groups.every(g=>g.matches.every(m=>m.winner));
+}
+function roundLabel(i,total) {
+  if(i===total-1)return "Finale";
+  if(i===total-2)return "Polufinale";
+  if(i===total-3)return "Četvrtfinale";
+  return "Kolo "+(i+1);
+}
+function matchHTML(m,label) {
+  return `<div class="match"><small>${esc(label)}</small>
+    ${pickHTML(m,m.a)}${pickHTML(m,m.b)}
+    ${m.winner?`<p>✓ Pobjednik: <b style="color:var(--green)">${esc(m.winner)}</b></p>`:""}
+  </div>`;
+}
+function pickHTML(m,p) {
+  if(!p)return '<button class="pick" disabled>Čeka se igrač…</button>';
+  const locked=publicMode||!!m.winner;
+  return `<button class="pick ${m.winner===p?"winner":""}" data-mid="${esc(m.id)}" data-player="${esc(p)}" ${locked?"disabled":""}>
+    <span>${esc(p)}</span><span>${m.winner===p?"✓":publicMode?"":"Pobjeda →"}</span>
+  </button>`;
+}
+function allMatchesHTML() {
+  let html="";
+  if(current.data.groups.length){
+    html+=`<div class="panel"><h2>Grupna faza</h2>`;
+    current.data.groups.forEach(g=>{
+      html+=`<div class="group"><h3>${esc(g.name)}</h3><div class="match-list">`;
+      g.matches.forEach((m,i)=>html+=matchHTML(m,"Meč "+(i+1)));
+      html+="</div></div>";
+    });
+    if(!current.data.bracket.length){
+      html+=`<div class="actions"><button class="primary" id="advance" ${groupsDone()&&!publicMode?"":"disabled"}>Nastavi u nokaut →</button></div>`;
+      if(!groupsDone())html+='<p class="small">Dovrši sve grupne mečeve za nastavak.</p>';
+    }
+    html+="</div>";
+  }
+  if(current.data.bracket.length){
+    html+=`<div class="panel"><h2>${current.data.groups.length?"Nokaut faza":"Turnirski ždrijeb"}</h2>`;
+    current.data.bracket.forEach((round,ri)=>{
+      html+=`<h3 style="margin-top:18px">${roundLabel(ri,current.data.bracket.length)}</h3><div class="match-list">`;
+      round.forEach((m,i)=>html+=matchHTML(m,"Meč "+(i+1)));
+      html+="</div>";
+    });
+    const champ=current.data.bracket.at(-1)?.[0]?.winner;
+    if(champ)html+=`<div class="notice" style="margin-top:15px">🏆 POBJEDNIK: <b>${esc(champ)}</b></div>`;
+    html+="</div>";
+  }
+  return html;
+}
+function renderStandings() {
+  if(!current.data.groups.length){
+    const champ=current.data.bracket.at(-1)?.[0]?.winner;
+    $("standingsView").innerHTML=`<div class="panel"><h2>Poredak</h2>${champ?"🏆 Pobjednik: "+esc(champ):"Turnir još nije završen."}</div>`;
+    return;
+  }
+  $("standingsView").innerHTML=`<div class="panel"><h2>Poredak skupina</h2>`+
+    current.data.groups.map(g=>`<div class="group"><h3>${esc(g.name)}</h3><table>
+    <tr><th>Igrač</th><th>Mečevi</th><th>Pobjede</th><th>Porazi</th></tr>
+    ${standings(g).map(p=>`<tr><td>${esc(p.name)}</td><td>${p.played}</td><td>${p.wins}</td><td>${p.losses}</td></tr>`).join("")}
+    </table></div>`).join("")+"</div>";
+}
+function render() {
+  if(!current)return;
+  $("eventName").textContent=current.name;
+  $("eventInfo").textContent=current.game+" · "+(current.format==="groups"?"Skupine + nokaut":"Direktan nokaut")+" · "+current.data.players.length+" igrača";
+  const link=location.origin+location.pathname+"?share="+encodeURIComponent(current.share_code);
+  $("shareUrl").innerHTML="Poveznica za gledatelje: <a href='"+esc(link)+"' target='_blank' rel='noopener'>"+esc(link)+"</a>";
+  $("matchesView").innerHTML=allMatchesHTML();
+  renderStandings();
+  $("matchesView").classList.toggle("hidden",view!=="matches");
+  $("standingsView").classList.toggle("hidden",view!=="standings");
+  document.querySelectorAll("[data-view]").forEach(b=>b.classList.toggle("active",b.dataset.view===view));
+  $("viewerNote").textContent=publicMode?"Samo pregled · rezultati se automatski osvježavaju.":"Organizatorski način · klikni igrača da zabilježiš pobjedu.";
+  $("matchesView").querySelectorAll("[data-mid]").forEach(b=>b.onclick=()=>setWinner(b.dataset.mid,b.dataset.player));
+  const adv=$("advance");if(adv)adv.onclick=advanceGroups;
+}
+async function saveData() {
+  const champion=current.data.bracket.at(-1)?.[0]?.winner||null;
+  current.data.champion=champion;
+  const {error}=await db.from("tournaments").update({
+    tournament_data:current.data,updated_at:new Date().toISOString()
+  }).eq("id",current.id);
+  if(error){say("Greška pri spremanju: "+error.message);return false;}
+  say("✓ Rezultati spremljeni online");
+  return true;
+}
+async function setWinner(id,name) {
+  if(publicMode||!current)return;
+  for(const g of current.data.groups){
+    const m=g.matches.find(x=>x.id===id);
+    if(m&&!m.winner){m.winner=name;await saveData();render();return;}
+  }
+  for(let r=0;r<current.data.bracket.length;r++){
+    const m=current.data.bracket[r].find(x=>x.id===id);
+    if(m&&!m.winner&&(m.a===name||m.b===name)){
+      m.winner=name;propagate(current.data.bracket,r);
+      await saveData();render();return;
+    }
+  }
+}
+async function advanceGroups() {
+  if(publicMode||!groupsDone()||current.data.bracket.length)return;
+  const qualifiers=[];
+  current.data.groups.forEach(g=>standings(g).slice(0,2).forEach(p=>qualifiers.push(p.name)));
+  current.data.bracket=makeBracket(qualifiers);
+  await saveData();render();
+}
+$("create").onclick=async()=>{
+  if(!user){say("Prijavi se kao organizator.");return;}
+  const list=[...$("players").querySelectorAll("input")].map(x=>x.value.trim()).filter(Boolean);
+  if(!list.length||list.length>16){alert("Unesi od 1 do 16 igrača.");return;}
+  if(new Set(list.map(n=>n.toLocaleLowerCase("hr"))).size!==list.length){alert("Imena igrača moraju biti različita.");return;}
+  const format=$("format").value;
+  if(format==="groups"&&list.length<4){alert("Za skupine + nokaut treba najmanje 4 igrača.");return;}
+  const data=makeTournamentData(list,format);
+  say("Stvaranje turnira...");
+  const {data:row,error}=await db.from("tournaments").insert({
+    owner_id:user.id,name:$("tName").value.trim()||"Buksa League",
+    game:$("game").value,format,tournament_data:data,is_public:true
+  }).select().single();
+  if(error){say("Greška: "+error.message);return;}
+  current={...row,data:row.tournament_data};
+  publicMode=false;show("viewer");render();await loadMine();
+};
+async function openTournament(id) {
+  const {data,error}=await db.from("tournaments").select("*").eq("id",id).single();
+  if(error){say("Ne mogu učitati turnir: "+error.message);return;}
+  current={...data,data:data.tournament_data};
+  publicMode=false;show("viewer");render();
+}
+async function loadMine() {
+  if(!user)return;
+  const {data,error}=await db.from("tournaments").select("*").eq("owner_id",user.id).order("created_at",{ascending:false});
+  if(error){$("myTournaments").textContent=error.message;return;}
+  $("myTournaments").innerHTML=data.length?data.map(t=>`
+    <div class="history"><b>${esc(t.name)}</b><div class="small">${esc(t.game)} · ${esc(t.format)} · ${new Date(t.created_at).toLocaleString("hr-HR")}</div>
+    <div class="actions"><button class="secondary" data-open="${esc(t.id)}">Otvori</button>
+    <button class="secondary" data-copy="${esc(t.share_code)}">Poveznica</button></div></div>`).join(""):"Još nema turnira.";
+  $("myTournaments").querySelectorAll("[data-open]").forEach(b=>b.onclick=()=>openTournament(b.dataset.open));
+  $("myTournaments").querySelectorAll("[data-copy]").forEach(b=>b.onclick=()=>copyShare(b.dataset.copy));
+}
+async function copyShare(code) {
+  const url=location.origin+location.pathname+"?share="+encodeURIComponent(code);
+  try{await navigator.clipboard.writeText(url);alert("Poveznica kopirana!");}
+  catch{prompt("Kopiraj poveznicu:",url);}
+}
+$("copyLink").onclick=()=>current&&copyShare(current.share_code);
+$("refresh").onclick=()=>current&&loadShared(current.share_code);
+$("logoutBtn").onclick=async()=>{await db.auth.signOut();location.href=location.pathname;};
+$("loginBtn").onclick=async()=>{
+  $("loginError").textContent="";
+  const {error}=await db.auth.signInWithPassword({email:$("email").value,password:$("password").value});
+  if(error){$("loginError").textContent=error.message;return;}
+  await boot();
+};
+document.querySelectorAll("[data-view]").forEach(b=>b.onclick=()=>{
+  view=b.dataset.view;
+  $("matchesView").classList.toggle("hidden",view!=="matches");
+  $("standingsView").classList.toggle("hidden",view!=="standings");
+  document.querySelectorAll("[data-view]").forEach(x=>x.classList.toggle("active",x===b));
+});
+async function loadShared(code) {
+  const {data,error}=await db.from("tournaments").select("*").eq("share_code",code).single();
+  if(error){say("Turnir nije pronađen ili nije javno dostupan.");return;}
+  current={...data,data:data.tournament_data};
+  publicMode=true;show("login",false);show("organizer",false);show("setup",false);show("viewer");render();
+}
+async function boot() {
+  const {data:{session}}=await db.auth.getSession();
+  user=session?.user||null;
+  const share=new URLSearchParams(location.search).get("share");
+  if(share){await loadShared(share);if(refreshTimer)clearInterval(refreshTimer);refreshTimer=setInterval(()=>loadShared(share),5000);return;}
+  if(user){
+    publicMode=false;show("login",false);show("organizer");show("setup");show("viewer",false);
+    $("signedEmail").textContent=user.email||"Organizator";
+    await loadMine();
+    say("Prijavljen organizator.");
+  }else{
+    show("login");show("organizer",false);show("viewer",false);
+    say("Prijavi se za upravljanje turnirima.");
+  }
+}
+db.auth.onAuthStateChange(()=>{setTimeout(boot,0);});
+$("count").value=8;
+boot();
+</script>
+</body>
+</html>
