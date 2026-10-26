@@ -1,316 +1,44 @@
-
-<!DOCTYPE html>
-<html lang="hr">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>BUKSA LEAGUE | Darts Club</title>
+<!doctype html>
+<html lang="hr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>BUKSA LEAGUE</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
-:root {
-  --bg:#080b09;--panel:#111713;--panel2:#171f19;
-  --line:#28352b;--green:#b9ff66;--text:#f4f7f3;
-  --muted:#8e9c91;--gold:#f5ce70;
-}
-*{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,Arial,sans-serif}
-button{font:inherit;cursor:pointer;transition:.2s}
-button:hover{transform:translateY(-2px);filter:brightness(1.12)}
-a{color:inherit;text-decoration:none}
-.layout{display:flex;min-height:100vh}
-.sidebar{width:245px;background:#0c110e;border-right:1px solid var(--line);padding:28px 18px;display:flex;flex-direction:column;flex-shrink:0}
-.logo{font-size:23px;font-weight:1000;letter-spacing:-1.5px;padding:0 10px}
-.logo span{color:var(--green)}
-.logo small{display:block;font-size:9px;letter-spacing:4px;color:var(--muted);margin-top:5px}
-.navlabel{font-size:10px;color:#617065;letter-spacing:2px;font-weight:800;padding:28px 12px 10px}
-.nav{width:100%;text-align:left;background:transparent;border:0;color:#9eaba1;padding:13px 12px;border-radius:10px;display:flex;align-items:center;gap:12px;margin:2px 0;font-size:13px;font-weight:700}
-.nav.active{background:#1b2a1c;color:var(--green)}
-.nav .ico{width:21px;font-size:17px;text-align:center}
-.sidebottom{margin-top:auto;padding:15px 10px 0;border-top:1px solid var(--line);color:var(--muted);font-size:12px}
-.online{display:inline-block;width:7px;height:7px;background:var(--green);border-radius:50%;margin-right:7px}
-main{min-width:0;flex:1}
-.topbar{height:75px;padding:0 35px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;gap:15px}
-.breadcrumb{font-size:12px;color:var(--muted)}
-.breadcrumb b{color:var(--text)}
-.topright{display:flex;align-items:center;gap:12px}
-.demo{font-size:10px;letter-spacing:1px;background:#222a20;color:var(--green);border:1px solid #3d4c35;padding:7px 10px;border-radius:7px;font-weight:800}
-.avatar{width:35px;height:35px;border-radius:10px;background:var(--green);color:#0c130a;display:grid;place-items:center;font-weight:1000}
-.content{max-width:1250px;padding:32px 35px 55px;margin:auto}
-.page{display:none}.page.active{display:block}
-.eyebrow{color:var(--green);font-size:10px;letter-spacing:3px;font-weight:900;text-transform:uppercase}
-h1{font-size:clamp(34px,4vw,51px);line-height:1.05;letter-spacing:-2.5px;margin:11px 0 12px;font-weight:950}
-h2{font-size:19px;letter-spacing:-.5px;margin:0}
-h3{font-size:14px;margin:0}
-p{color:var(--muted);font-size:13px;line-height:1.65}
-.hero{border:1px solid #31422f;border-radius:19px;padding:33px;position:relative;overflow:hidden;background:radial-gradient(ellipse at 85% 20%,#284528 0%,transparent 38%),linear-gradient(120deg,#17281b,#101612 65%);margin-bottom:23px}
-.hero:after{content:"301";position:absolute;right:25px;top:-25px;font-size:clamp(110px,17vw,220px);letter-spacing:-12px;line-height:1;font-weight:1000;color:#ffffff07;pointer-events:none}
-.hero-inner{position:relative;z-index:1;max-width:650px}
-.hero h1 span{color:var(--green)}
-.hero p{max-width:450px;margin-bottom:22px}
-.btn{border:1px solid var(--line);border-radius:9px;padding:11px 15px;font-size:12px;font-weight:800;background:var(--panel2);color:var(--text)}
-.btn.primary{background:var(--green);border-color:var(--green);color:#0a1108}
-.btn.ghost{background:#111a14}
-.btnrow{display:flex;gap:9px;flex-wrap:wrap}
-.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin-bottom:24px}
-.stat{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:19px}
-.stat-top{display:flex;align-items:center;justify-content:space-between;color:var(--muted);font-size:11px}
-.stat-icon{font-size:19px}
-.stat-num{font-size:32px;font-weight:950;letter-spacing:-1px;margin-top:13px}
-.stat-sub{font-size:10px;color:var(--muted);margin-top:5px}
-.green{color:var(--green)}.gold{color:var(--gold)}
-.twocol{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(260px,1fr);gap:17px}
-.card{background:var(--panel);border:1px solid var(--line);border-radius:15px;overflow:hidden;margin-bottom:17px}
-.cardhead{padding:19px 20px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;gap:10px}
-.cardbody{padding:18px 20px}
-.smallbtn{background:transparent;border:1px solid var(--line);border-radius:7px;color:var(--muted);font-size:10px;padding:7px 9px;font-weight:800}
-.tournament{display:flex;align-items:center;gap:13px;padding:15px 0;border-bottom:1px solid #202b23}
-.tournament:last-child{border-bottom:0;padding-bottom:0}
-.tournament:first-child{padding-top:0}
-.t-icon{width:43px;height:43px;border-radius:11px;display:grid;place-items:center;background:#202e20;font-size:20px;flex-shrink:0}
-.t-info{flex:1;min-width:0}
-.t-info b{display:block;font-size:12px;margin-bottom:5px}
-.t-info small{font-size:10px;color:var(--muted)}
-.tag{font-size:9px;font-weight:900;letter-spacing:.4px;padding:5px 7px;border-radius:5px;white-space:nowrap}
-.tag.live{background:#25351f;color:var(--green)}
-.tag.done{background:#242b26;color:#a4b0a6}
-.tag.upcoming{background:#352e1d;color:var(--gold)}
-.sectiontitle{display:flex;justify-content:space-between;align-items:end;gap:12px;margin:27px 0 14px}
-.sectiontitle h2{font-size:21px}
-.sectiontitle p{margin:5px 0 0}
-.matchrow{display:flex;align-items:center;gap:8px;padding:15px 0;border-bottom:1px solid #202b23}
-.matchrow:last-child{border-bottom:0}
-.matchteams{flex:1;min-width:0}
-.teamline{display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:12px;padding:4px 0}
-.teamline.winner{color:var(--green);font-weight:800}
-.score{font-weight:900;font-size:15px;min-width:40px;text-align:center}
-.matchmeta{font-size:9px;color:var(--muted);min-width:66px;text-align:right}
-.leader{display:flex;align-items:center;gap:11px;padding:12px 0;border-bottom:1px solid #202b23}
-.leader:last-child{border:0}
-.rank{width:27px;height:27px;display:grid;place-items:center;border-radius:8px;background:#1c261e;color:var(--muted);font-size:11px;font-weight:900}
-.rank.first{background:#45391e;color:var(--gold)}
-.playerpic{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;background:#28372b;font-size:10px;font-weight:900}
-.leaderinfo{flex:1}.leaderinfo b{display:block;font-size:12px}.leaderinfo small{font-size:10px;color:var(--muted)}
-.leaderpoints{font-weight:900;font-size:14px}.leaderpoints small{display:block;text-align:right;font-size:9px;color:var(--muted);font-weight:500}
-.tablewrap{overflow-x:auto}
-table{border-collapse:collapse;width:100%;font-size:12px;white-space:nowrap}
-th{font-size:9px;letter-spacing:1px;color:var(--muted);text-align:left;font-weight:800}
-td,th{padding:14px 12px;border-bottom:1px solid #222d24}
-tbody tr:last-child td{border-bottom:0}
-.pos{color:var(--muted);width:35px}
-.playercell{display:flex;align-items:center;gap:9px;font-weight:800}
-.initials{width:28px;height:28px;border-radius:8px;background:#26372a;display:grid;place-items:center;font-size:10px}
-.positive{color:var(--green);font-weight:800}
-.filterrow{display:flex;gap:8px;flex-wrap:wrap;margin:20px 0}
-.filter{background:#141b16;color:var(--muted);border:1px solid var(--line);border-radius:8px;padding:9px 13px;font-size:11px;font-weight:800}
-.filter.active{background:var(--green);color:#0a1108;border-color:var(--green)}
-.empty{padding:30px;text-align:center;color:var(--muted);font-size:12px}
-footer{color:#59665c;text-align:center;padding:28px;font-size:10px;letter-spacing:1px}
-@media(max-width:900px){
-.sidebar{width:75px;padding:23px 9px}
-.logo{font-size:0;padding:0;text-align:center}.logo span{font-size:17px}.logo small,.navlabel,.navtext,.sidebottom{display:none}
-.nav{justify-content:center;padding:14px 5px}.nav .ico{font-size:19px}
-.content{padding:24px 20px}
-.stats{grid-template-columns:repeat(2,minmax(0,1fr))}
-.twocol{grid-template-columns:1fr}
-}
-@media(max-width:560px){
-.sidebar{width:56px;padding:18px 5px}
-.topbar{height:60px;padding:0 14px}
-.content{padding:17px 12px}
-.hero{padding:24px 19px}
-.hero:after{right:-10px;top:15px;font-size:100px}
-h1{letter-spacing:-1.5px}
-.stats{gap:9px}
-.stat{padding:13px}
-.stat-num{font-size:27px}
-.stat-top{font-size:10px}
-.cardhead,.cardbody{padding:15px}
-.demo{font-size:8px}
-.matchmeta{min-width:50px}
-}
-</style>
-</head>
-<body>
-<div class="layout">
-<aside class="sidebar">
-  <div class="logo">BUKSA <span>LEAGUE</span><small>DARTS CLUB</small></div>
-  <div class="navlabel">GLAVNI IZBORNIK</div>
-  <button class="nav active" data-page="dashboard"><span class="ico">⌂</span><span class="navtext">Pregled</span></button>
-  <button class="nav" data-page="tournaments"><span class="ico">▦</span><span class="navtext">Turniri</span></button>
-  <button class="nav" data-page="matches"><span class="ico">⚔</span><span class="navtext">Utakmice</span></button>
-  <button class="nav" data-page="ranking"><span class="ico">♛</span><span class="navtext">Poredak igrača</span></button>
-  <div class="navlabel">ZAJEDNICA</div>
-  <button class="nav" data-page="players"><span class="ico">♙</span><span class="navtext">Igrači</span></button>
-  <div class="sidebottom"><span class="online"></span>Demo stranica aktivna<br><br>BUKSA LEAGUE © 2026</div>
-</aside>
-
-<main>
-  <div class="topbar">
-    <div class="breadcrumb">BUKSA LEAGUE &nbsp;/&nbsp; <b id="crumb">Pregled</b></div>
-    <div class="topright"><span class="demo">● DEMO VERZIJA</span><div class="avatar">B</div></div>
-  </div>
-
-  <div class="content">
-    <section class="page active" id="dashboard">
-      <div class="hero">
-        <div class="hero-inner">
-          <div class="eyebrow">Dobrodošao u klub</div>
-          <h1>GAME ON.<br><span>LEGEND MODE.</span></h1>
-          <p>Sve za tvoje pikado turnire na jednom mjestu. Prati rezultate, usporedi igrače i otkrij tko je kralj ochea.</p>
-          <div class="btnrow">
-            <button class="btn primary" onclick="newTournament()">＋ Novi turnir</button>
-            <button class="btn ghost" onclick="navigate('tournaments')">Pregledaj turnire ↗</button>
-          </div>
-        </div>
-      </div>
-
-      <div class="stats">
-        <div class="stat"><div class="stat-top">UKUPNO TURNIRA <span class="stat-icon">▦</span></div><div class="stat-num" id="statT">12</div><div class="stat-sub">U povijesti kluba</div></div>
-        <div class="stat"><div class="stat-top">REGISTRIRANI IGRAČI <span class="stat-icon">♙</span></div><div class="stat-num" id="statP">24</div><div class="stat-sub">Aktivna zajednica</div></div>
-        <div class="stat"><div class="stat-top">ODIGRANE UTAKMICE <span class="stat-icon">⚔</span></div><div class="stat-num" id="statM">86</div><div class="stat-sub">Svaki hitac se računa</div></div>
-        <div class="stat"><div class="stat-top">AKTIVNI TURNIRI <span class="stat-icon">◉</span></div><div class="stat-num green" id="statL">2</div><div class="stat-sub">Borba još traje</div></div>
-      </div>
-
-      <div class="twocol">
-        <div>
-          <div class="sectiontitle"><div><h2>Turniri u fokusu</h2><p>Što se događa u klubu</p></div><button class="smallbtn" onclick="navigate('tournaments')">SVI TURNIRI ↗</button></div>
-          <div class="card"><div class="cardbody" id="featured"></div></div>
-          <div class="sectiontitle"><div><h2>Posljednji rezultati</h2><p>Nedavno odigrane utakmice</p></div><button class="smallbtn" onclick="navigate('matches')">SVE UTAKMICE ↗</button></div>
-          <div class="card"><div class="cardbody" id="recentMatches"></div></div>
-        </div>
-        <div>
-          <div class="sectiontitle"><div><h2>Hall of Fame</h2><p>Najuspješniji igrači</p></div></div>
-          <div class="card"><div class="cardhead"><h3>🏆 Top igrači</h3><span class="tag live">SEZONA</span></div><div class="cardbody" id="topPlayers"></div></div>
-          <div class="card"><div class="cardhead"><h3>🎯 Izazov tjedna</h3></div><div class="cardbody"><div class="eyebrow">WEEKLY CHALLENGE</div><h2 style="margin-top:10px">Savršenih 180</h2><p>Pogodi najveći mogući rezultat u jednom bacanju. Možeš li pogoditi tri triple 20?</p><div style="display:flex;justify-content:space-between;align-items:center;margin-top:17px"><span class="small">NAGRADA</span><b class="gold">+100 XP</b></div><div style="height:5px;background:#263127;border-radius:8px;margin-top:10px"><div style="height:5px;width:65%;background:var(--green);border-radius:8px"></div></div><p class="small">65% igrača prihvatilo je izazov.</p></div></div>
-        </div>
-      </div>
-    </section>
-
-    <section class="page" id="tournaments">
-      <div class="eyebrow">Natjecanje</div><h1>Turniri<span class="green">.</span></h1>
-      <p>Pregled svih događaja, rezultata i nadolazećih okršaja.</p>
-      <div class="btnrow" style="margin-top:20px"><button class="btn primary" onclick="newTournament()">＋ Stvori demo turnir</button></div>
-      <div class="filterrow"><button class="filter active" data-filter="all">Svi turniri</button><button class="filter" data-filter="live">U tijeku</button><button class="filter" data-filter="done">Završeni</button><button class="filter" data-filter="upcoming">Nadolazeći</button></div>
-      <div class="card"><div class="cardhead"><h2>Arhiva turnira</h2><span class="small" id="tCount"></span></div><div class="cardbody" id="allTournaments"></div></div>
-    </section>
-
-    <section class="page" id="matches">
-      <div class="eyebrow">Rezultati uživo</div><h1>Utakmice<span class="green">.</span></h1>
-      <p>Rezultati i najzanimljiviji dvoboji naše pikado lige.</p>
-      <div class="filterrow"><button class="filter active" data-mfilter="all">Sve utakmice</button><button class="filter" data-mfilter="done">Odigrane</button><button class="filter" data-mfilter="live">U tijeku</button></div>
-      <div class="card"><div class="cardhead"><h2>Raspored i rezultati</h2><span class="tag live">● LIVE CENTER</span></div><div class="cardbody" id="allMatches"></div></div>
-    </section>
-
-    <section class="page" id="ranking">
-      <div class="eyebrow">Statistika</div><h1>Poredak igrača<span class="green">.</span></h1>
-      <p>Tko dominira u BUKSA LEAGUE? Poredak na temelju demo statistike.</p>
-      <div class="stats" style="margin-top:24px">
-        <div class="stat"><div class="stat-top">PRVAK SEZONE</div><div class="stat-num" style="font-size:21px">Marko K.</div><div class="stat-sub">Najviše bodova</div></div>
-        <div class="stat"><div class="stat-top">NAJBOLJI PROSJEK</div><div class="stat-num">72.4</div><div class="stat-sub">Po bacanju</div></div>
-        <div class="stat"><div class="stat-top">NAJVIŠE 180-ICA</div><div class="stat-num">14</div><div class="stat-sub">Ove sezone</div></div>
-        <div class="stat"><div class="stat-top">WIN RATE</div><div class="stat-num green">82%</div><div class="stat-sub">Najbolji rezultat</div></div>
-      </div>
-      <div class="card"><div class="cardhead"><h2>🏆 Ligaška tablica</h2><span class="tag live">SEZONA 2026</span></div><div class="tablewrap"><table><thead><tr><th>#</th><th>IGRAČ</th><th>ODIG.</th><th>POB.</th><th>POR.</th><th>WIN %</th><th>BODOVI</th></tr></thead><tbody id="rankingRows"></tbody></table></div></div>
-    </section>
-
-    <section class="page" id="players">
-      <div class="eyebrow">Zajednica</div><h1>Igrači<span class="green">.</span></h1>
-      <p>Upoznaj natjecatelje BUKSA LEAGUE.</p>
-      <div class="filterrow"><button class="filter active" data-pfilter="all">Svi igrači</button><button class="filter" data-pfilter="top">Top 5</button></div>
-      <div class="stats" id="playerCards"></div>
-    </section>
-  </div>
-  <footer>BUKSA LEAGUE &nbsp;·&nbsp; BUILT FOR THE OCHЕ &nbsp;·&nbsp; DEMO 2026</footer>
-</main>
-</div>
-
+:root{--bg:#080d0b;--panel:#111a16;--line:#28382f;--text:#f2f7f3;--muted:#9aaca0;--green:#a5f36b}*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 70% -20%,#203c29,transparent 55%),var(--bg);color:var(--text);font:15px system-ui,sans-serif}.app{max-width:1100px;margin:auto;padding:22px}.top,.row{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}.brand{font-weight:900;letter-spacing:2px;font-size:19px}.brand span{display:inline-grid;place-items:center;background:var(--green);color:#10200d;border-radius:12px;width:42px;height:42px;margin-right:10px}button{cursor:pointer;border:0;border-radius:10px;padding:10px 14px;background:var(--green);color:#10200d;font-weight:800}button.alt{background:#223128;color:white;border:1px solid var(--line)}input,select,textarea{width:100%;padding:11px;background:#0b120e;border:1px solid var(--line);border-radius:10px;color:white}label{display:block;color:var(--muted);margin:12px 0 6px}.layout{display:grid;grid-template-columns:210px 1fr;gap:18px;margin-top:20px}.side,.card,.hero{background:var(--panel);border:1px solid var(--line);border-radius:17px;padding:17px}.side button{display:block;width:100%;text-align:left;margin:4px 0;background:transparent;color:#b9c9bd}.side button:hover{background:#24372a;color:var(--green)}.hero{background:linear-gradient(120deg,#1c3222,#111a16);margin-bottom:16px}.hero small{color:var(--green);letter-spacing:2px;font-weight:bold}.hero h1{font-size:clamp(27px,4vw,40px);margin:8px 0}.muted{color:var(--muted)}.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:16px}.stat{padding:16px;background:var(--panel);border:1px solid var(--line);border-radius:14px}.stat strong{display:block;font-size:26px}.item{background:#0b120e;border:1px solid var(--line);border-radius:12px;padding:14px;margin-top:10px}.hidden{display:none!important}.notice{padding:12px;border-radius:10px;background:#19271d;margin:12px 0}.error{background:#421e1e}.formgrid{display:grid;grid-template-columns:1fr 1fr;gap:0 12px}.full{grid-column:1/-1}.tag{color:var(--green);font-size:12px}.share{overflow-wrap:anywhere;color:var(--green)}@media(max-width:700px){.layout{grid-template-columns:1fr}.side{display:flex;overflow:auto;gap:4px}.side button{white-space:nowrap;width:auto}.stats{grid-template-columns:1fr}.formgrid{grid-template-columns:1fr}.full{grid-column:auto}.app{padding:12px}}
+</style></head><body><div class="app">
+<header class="top"><div class="brand"><span>🎯</span>BUKSA LEAGUE<div class="muted" style="font-size:10px;letter-spacing:2px;margin-left:54px">DARTS CLUB • TOURNAMENT HUB</div></div><div><span id="status" class="muted">Spajanje…</span> <button class="alt" id="authBtn">Prijava organizatora</button></div></header>
+<div class="layout"><aside class="side"><button onclick="view('home')">▦　Pregled</button><button onclick="view('tournaments')">🏆　Turniri</button><button onclick="view('new')">＋　Novi turnir</button><button onclick="view('login')">🔐　Organizator</button></aside><main>
+<section class="hero"><small>YOUR OCHES. YOUR RULES.</small><h1>Svaka strelica se računa.</h1><p class="muted">Turniri, utakmice i rezultati na jednom mjestu.</p></section><div id="msg" class="notice hidden"></div>
+<section id="home"><div class="stats"><div class="stat"><span class="muted">Dostupni turniri</span><strong id="count">—</strong></div><div class="stat"><span class="muted">Javni turniri</span><strong id="pubcount">—</strong></div><div class="stat"><span class="muted">Organizator</span><strong id="who">Gost</strong></div></div><div class="card"><div class="row"><h2>Turniri</h2><button onclick="view('tournaments')">Svi turniri →</button></div><div id="recent">Učitavanje…</div></div></section>
+<section id="tournaments" class="hidden"><div class="card"><div class="row"><h2>Svi turniri</h2><button onclick="view('new')">＋ Novi turnir</button></div><div id="all"></div></div></section>
+<section id="new" class="hidden"><div class="card"><h2>Novi turnir</h2><p class="muted">Za spremanje u bazu moraš biti prijavljen.</p><form id="create"><div class="formgrid"><div class="full"><label>Naziv</label><input id="name" required placeholder="Buksa Friday Open"></div><div><label>Igra</label><select id="game"><option>301</option><option>Cricket</option></select></div><div><label>Format</label><select id="format"><option value="knockout">Knockout</option><option value="groups">Grupe pa knockout</option></select></div><div class="full"><label>Igrači — jedno ime po retku</label><textarea id="players" rows="6" required placeholder="Marko&#10;Ivan&#10;Luka&#10;Ante"></textarea></div><div class="full"><label>Vidljivost</label><select id="public"><option value="true">Javno</option><option value="false">Privatno</option></select></div></div><p><button id="save" type="submit">Spremi turnir</button></p></form></div></section>
+<section id="login" class="hidden"><div class="card"><h2>Prijava organizatora</h2><p class="muted">Koristi postojeći Supabase račun.</p><form id="loginForm"><label>Email</label><input id="email" type="email" required><label>Lozinka</label><input id="password" type="password" required><p><button>Prijavi se</button> <button type="button" class="alt" id="logout">Odjava</button></p></form><div id="user" class="muted"></div></div></section>
+<section id="detail" class="hidden"><div class="card"><div class="row"><h2 id="dt"></h2><button class="alt" onclick="view('tournaments')">← Natrag</button></div><div id="meta" class="muted"></div><div id="share" class="notice"></div><h3>Igrači</h3><div id="dp"></div><h3>Utakmice</h3><div id="dm"></div></div></section>
+</main></div><p class="muted" style="text-align:center;font-size:12px;margin:24px">BUKSA LEAGUE • privatni darts turniri</p></div>
 <script>
-const players=[
- {name:"Marko K.",played:22,wins:18,losses:4,points:540,avg:72.4,icon:"MK"},
- {name:"Ivan P.",played:21,wins:16,losses:5,points:495,avg:68.8,icon:"IP"},
- {name:"Filip M.",played:20,wins:14,losses:6,points:438,avg:64.2,icon:"FM"},
- {name:"Luka B.",played:19,wins:12,losses:7,points:390,avg:61.7,icon:"LB"},
- {name:"Petar S.",played:18,wins:10,losses:8,points:345,avg:58.1,icon:"PS"},
- {name:"Ante R.",played:16,wins:8,losses:8,points:290,avg:55.6,icon:"AR"},
- {name:"Dino T.",played:14,wins:6,losses:8,points:230,avg:52.3,icon:"DT"},
- {name:"Karlo V.",played:12,wins:4,losses:8,points:180,avg:48.5,icon:"KV"}
-];
-const tournaments=[
- {name:"Buksa Masters #12",game:"301",format:"Nokaut",players:16,status:"live",date:"Danas, 20:00",icon:"🎯"},
- {name:"Friday Night Darts",game:"Cricket",format:"Skupine + nokaut",players:12,status:"upcoming",date:"Petak, 19:30",icon:"⚡"},
- {name:"Autumn Cup",game:"301",format:"Nokaut",players:16,status:"done",date:"18. listopada",icon:"🏆"},
- {name:"Double Trouble",game:"Cricket",format:"Parovi",players:8,status:"done",date:"15. listopada",icon:"🎱"},
- {name:"Sunday League",game:"301",format:"Skupine",players:12,status:"done",date:"12. listopada",icon:"🔥"},
- {name:"Buksa Open",game:"301",format:"Nokaut",players:16,status:"upcoming",date:"25. listopada",icon:"🏹"}
-];
-const matches=[
- {a:"Marko K.",b:"Ivan P.",sa:3,sb:1,status:"done",meta:"Četvrtfinale"},
- {a:"Filip M.",b:"Luka B.",sa:3,sb:2,status:"done",meta:"Četvrtfinale"},
- {a:"Petar S.",b:"Ante R.",sa:1,sb:3,status:"done",meta:"Osmina finala"},
- {a:"Dino T.",b:"Karlo V.",sa:2,sb:2,status:"live",meta:"U tijeku"},
- {a:"Ivan P.",b:"Filip M.",sa:null,sb:null,status:"upcoming",meta:"Polufinale"}
-];
-const statusName={live:"U TIJEKU",done:"ZAVRŠEN",upcoming:"NADOLAZI"};
-function navigate(id){
- document.querySelectorAll(".page").forEach(p=>p.classList.toggle("active",p.id===id));
- document.querySelectorAll(".nav").forEach(n=>n.classList.toggle("active",n.dataset.page===id));
- const labels={dashboard:"Pregled",tournaments:"Turniri",matches:"Utakmice",ranking:"Poredak igrača",players:"Igrači"};
- document.getElementById("crumb").textContent=labels[id]||id;
- window.scrollTo({top:0,behavior:"smooth"});
-}
-document.querySelectorAll(".nav").forEach(b=>b.onclick=()=>navigate(b.dataset.page));
-function tournamentHTML(t){
- return `<div class="tournament"><div class="t-icon">${t.icon}</div><div class="t-info"><b>${t.name}</b><small>${t.game} · ${t.format} · ${t.players} igrača</small></div><span class="tag ${t.status}">${statusName[t.status]}</span></div>`;
-}
-function matchHTML(m){
- let score=m.status==="upcoming"?"VS":m.sa+" : "+m.sb;
- return `<div class="matchrow"><div class="matchteams"><div class="teamline ${m.sa>m.sb?"winner":""}"><span>${m.a}</span></div><div class="teamline ${m.sb>m.sa?"winner":""}"><span>${m.b}</span></div></div><div class="score">${score}</div><div class="matchmeta"><div>${m.status==="live"?"🔴 LIVE":m.status==="done"?"ZAVRŠENO":"RASPORED"}</div><div style="margin-top:5px">${m.meta}</div></div></div>`;
-}
-function leaderHTML(p,i){
- return `<div class="leader"><div class="rank ${i===0?"first":""}">${i+1}</div><div class="playerpic">${p.icon}</div><div class="leaderinfo"><b>${p.name}</b><small>${p.wins} pobjeda · ${p.played} mečeva</small></div><div class="leaderpoints">${p.points}<small>BODOVA</small></div></div>`;
-}
-function renderFeatured(){
- document.getElementById("featured").innerHTML=tournaments.slice(0,4).map(tournamentHTML).join("");
- document.getElementById("recentMatches").innerHTML=matches.slice(0,4).map(matchHTML).join("");
- document.getElementById("topPlayers").innerHTML=players.slice(0,5).map(leaderHTML).join("");
-}
-function renderTournaments(filter="all"){
- const list=filter==="all"?tournaments:tournaments.filter(t=>t.status===filter);
- document.getElementById("tCount").textContent=list.length+" TURNIRA";
- document.getElementById("allTournaments").innerHTML=list.length?list.map(tournamentHTML).join(""):'<div class="empty">Nema turnira u ovoj kategoriji.</div>';
-}
-function renderMatches(filter="all"){
- const list=filter==="all"?matches:matches.filter(m=>m.status===filter);
- document.getElementById("allMatches").innerHTML=list.length?list.map(matchHTML).join(""):'<div class="empty">Nema utakmica u ovoj kategoriji.</div>';
-}
-function renderRanking(){
- document.getElementById("rankingRows").innerHTML=players.slice().sort((a,b)=>b.points-a.points).map((p,i)=>`<tr><td class="pos">${String(i+1).padStart(2,"0")}</td><td><div class="playercell"><div class="initials">${p.icon}</div>${p.name}</div></td><td>${p.played}</td><td>${p.wins}</td><td>${p.losses}</td><td class="positive">${Math.round(p.wins/p.played*100)}%</td><td><b>${p.points}</b></td></tr>`).join("");
-}
-function renderPlayers(top=false){
- const list=top?players.slice(0,5):players;
- document.getElementById("playerCards").innerHTML=list.map((p,i)=>`<div class="stat"><div style="display:flex;align-items:center;gap:12px"><div class="playerpic" style="width:45px;height:45px">${p.icon}</div><div><b>${p.name}</b><div class="small">Pozicija #${i+1}</div></div></div><div class="stat-num">${p.points}</div><div class="stat-sub">${p.wins} pobjeda · Prosjek ${p.avg}</div><div style="height:4px;background:#273229;border-radius:8px;margin-top:13px"><div style="height:4px;width:${p.wins/p.played*100}%;background:var(--green);border-radius:8px"></div></div></div>`).join("");
-}
-document.querySelectorAll("[data-filter]").forEach(b=>b.onclick=()=>{
- document.querySelectorAll("[data-filter]").forEach(x=>x.classList.toggle("active",x===b));
- renderTournaments(b.dataset.filter);
-});
-document.querySelectorAll("[data-mfilter]").forEach(b=>b.onclick=()=>{
- document.querySelectorAll("[data-mfilter]").forEach(x=>x.classList.toggle("active",x===b));
- renderMatches(b.dataset.mfilter);
-});
-document.querySelectorAll("[data-pfilter]").forEach(b=>b.onclick=()=>{
- document.querySelectorAll("[data-pfilter]").forEach(x=>x.classList.toggle("active",x===b));
- renderPlayers(b.dataset.pfilter==="top");
-});
-function newTournament(){
- const name=prompt("Naziv novog demo turnira:","Buksa League #13");
- if(!name||!name.trim())return;
- tournaments.unshift({name:name.trim(),game:"301",format:"Nokaut",players:8,status:"upcoming",date:"Upravo dodan",icon:"🎯"});
- document.getElementById("statT").textContent=Number(document.getElementById("statT").textContent)+1;
- renderFeatured();renderTournaments();
- navigate("tournaments");
- alert("Demo turnir je dodan! Ovo je samo lokalni prikaz — podaci se ne spremaju na server.");
-}
-renderFeatured();renderTournaments();renderMatches();renderRanking();renderPlayers();
+const URL='https://hcijdrbkyuygxpagxrli.supabase.co';
+const KEY='sb_publishable_FTTeccIJBTI0ceMqilButA_2zHkCo-7';
+const db=window.supabase.createClient(URL,KEY);let user=null,rows=[];
+const $=x=>document.getElementById(x);
+function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function msg(s,err=false){$('msg').textContent=s;$('msg').classList.remove('hidden','error');if(err)$('msg').classList.add('error')}
+function view(v){['home','tournaments','new','login','detail'].forEach(x=>$(x).classList.toggle('hidden',x!==v));if(v==='tournaments')render()}
+function dataPlayers(t){let p=t.tournament_data?.players||[];return Array.isArray(p)?p:[]}
+function card(t){return `<div class="item"><div class="row"><div><b>${esc(t.name)}</b><div class="muted">${esc(t.game)} · ${esc(t.format)} · ${dataPlayers(t).length} igrača</div></div><span class="tag">${t.is_public?'JAVNO':'PRIVATNO'}</span></div><p><button onclick="openT('${esc(t.id)}')">Otvori</button> <button class="alt" onclick="shareT('${esc(t.share_code||'')}')">Kopiraj link</button></p></div>`}
+function render(){let h=rows.length?rows.map(card).join(''):'<p class="muted">Nema dostupnih turnira.</p>';$('all').innerHTML=h;$('recent').innerHTML=h;$('count').textContent=rows.length;$('pubcount').textContent=rows.filter(t=>t.is_public).length;$('who').textContent=user?'Prijavljen':'Gost';$('authBtn').textContent=user?'Odjava':'Prijava organizatora';$('user').textContent=user?'Prijavljeni račun: '+user.email:'Niste prijavljeni.'}
+async function load(){const {data,error}=await db.from('tournaments').select('id,owner_id,share_code,name,game,format,tournament_data,is_public,created_at').order('created_at',{ascending:false});if(error){$('status').textContent='Greška baze';msg('Supabase: '+error.message,true);return}rows=data||[];$('status').textContent='Supabase povezan';render()}
+async function sync(){let {data}=await db.auth.getSession();user=data.session?.user||null;await load()}
+$('authBtn').onclick=async()=>{if(user){await db.auth.signOut();user=null;await sync();msg('Odjavljeni ste.')}else view('login')};
+$('loginForm').onsubmit=async e=>{e.preventDefault();let {data,error}=await db.auth.signInWithPassword({email:$('email').value.trim(),password:$('password').value});if(error){msg('Prijava nije uspjela: '+error.message,true);return}user=data.user;await sync();view('home');msg('Uspješna prijava.')};
+$('logout').onclick=async()=>{await db.auth.signOut();user=null;await sync();msg('Odjavljeni ste.')};
+function code(){return Math.random().toString(36).slice(2,10).toUpperCase()}
+$('create').onsubmit=async e=>{e.preventDefault();if(!user){msg('Prvo se prijavi kao organizator.',true);view('login');return}let p=$('players').value.split(/\n|,/).map(x=>x.trim()).filter(Boolean);if(p.length<2||p.length>16){msg('Upiši od 2 do 16 igrača.',true);return}let bracket=[];for(let i=0;i<p.length;i+=2)bracket.push({a:p[i]||null,b:p[i+1]||null,winner:null});let row={owner_id:user.id,share_code:code(),name:$('name').value.trim(),game:$('game').value,format:$('format').value,tournament_data:{players:p,groups:[],bracket,champion:null},is_public:$('public').value==='true'};$('save').disabled=true;let {error}=await db.from('tournaments').insert(row);$('save').disabled=false;if(error){msg('Spremanje nije uspjelo: '+error.message,true);return}await load();view('tournaments');msg('Turnir je spremljen u bazu.')};
+window.openT=id=>{let t=rows.find(x=>x.id===id);if(!t)return;$('dt').textContent=t.name;$('meta').textContent=t.game+' · '+t.format;$('share').innerHTML='Link za dijeljenje: <a class="share" href="'+esc(location.origin+location.pathname+'?share='+encodeURIComponent(t.share_code||''))+'">'+esc(location.origin+location.pathname+'?share='+encodeURIComponent(t.share_code||''))+'</a>';$('dp').innerHTML=dataPlayers(t).map((p,i)=>`<div class="item">${i+1}. ${esc(typeof p==='string'?p:p.name)}</div>`).join('');$('dm').innerHTML=renderMatches(t);view('detail')};
+function roundOf(m){let z=String(m.id||'r0m0').match(/^r(\\d+)m(\\d+)$/);return z?Number(z[1]):0}
+function renderMatches(t){let ms=t.tournament_data?.bracket||[];if(!ms.length)return '<p class="muted">Nema utakmica.</p>';return [...ms].sort((a,b)=>roundOf(a)-roundOf(b)).map((m,i)=>{let options=[m.a,m.b].filter(Boolean);let control=user&&t.owner_id===user.id&&!m.winner&&options.length>1?`<div class="actions"><select id="winner-${esc(m.id)}">${options.map(x=>`<option value="${esc(x)}">${esc(x)}</option>`).join('')}</select><button onclick="saveWinner('${esc(t.id)}','${esc(m.id)}')">Spremi pobjednika</button></div>`:'';return `<div class="item"><div class="row"><b>Runda ${roundOf(m)+1} · Utakmica ${i+1}</b><span class="tag">${esc(m.winner||'Nije odigrano')}</span></div><p>${esc(m.a||'Čeka igrača')} <span class="muted">vs</span> ${esc(m.b||'Čeka igrača')}</p>${control}</div>`}).join('')}
+window.saveWinner=async function(tid,mid){let t=rows.find(x=>x.id===tid);if(!t||!user||t.owner_id!==user.id){msg('Samo vlasnik turnira može unositi rezultate.',true);return}let d=JSON.parse(JSON.stringify(t.tournament_data||{}));d.bracket=Array.isArray(d.bracket)?d.bracket:[];let m=d.bracket.find(x=>x.id===mid);if(!m)return;let w=$('winner-'+mid)?.value;if(![m.a,m.b].includes(w)){msg('Odaberi jednog od igrača utakmice.',true);return}m.winner=w;let r=roundOf(m);let current=d.bracket.filter(x=>roundOf(x)===r);if(current.every(x=>x.winner)){let nextRound=r+1;if(!d.bracket.some(x=>roundOf(x)===nextRound)){let winners=current.map(x=>x.winner);for(let i=0;i<winners.length;i+=2){if(i+1<winners.length)d.bracket.push({id:`r${nextRound}m${Math.floor(i/2)}`,a:winners[i],b:winners[i+1],winner:null});else d.bracket.push({id:`r${nextRound}m${Math.floor(i/2)}`,a:winners[i],b:null,winner:winners[i]})}}if(current.length===1)d.champion=current[0].winner;}let {error}=await db.from('tournaments').update({tournament_data:d}).eq('id',tid).eq('owner_id',user.id);if(error){msg('Rezultat nije spremljen: '+error.message,true);return}t.tournament_data=d;render();openT(tid);msg('Pobjednik je spremljen, a bracket ažuriran.')}
+
+window.shareT=async c=>{let u=location.origin+location.pathname+'?share='+encodeURIComponent(c);try{await navigator.clipboard.writeText(u);msg('Link kopiran: '+u)}catch{prompt('Kopiraj link',u)}};
+async function init(){await sync();let c=new URLSearchParams(location.search).get('share');if(c){let t=rows.find(x=>x.share_code===c);if(t)openT(t.id);else msg('Turnir nije dostupan javnosti ili pravila baze ne dopuštaju pristup.',true)}}
+db.auth.onAuthStateChange(()=>setTimeout(sync,0));init();
 </script>
 </body>
 </html>
