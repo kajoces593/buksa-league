@@ -3,6 +3,26 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 :root{--bg:#07090d;--panel:#10141b;--line:#242b36;--text:#f4f6fb;--muted:#98a2b3;--accent:#ef233c;--accent2:#ff5267;--green:#31d583;--gold:#ffc857;--shadow:0 18px 50px #0006}*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:radial-gradient(ellipse at 80% -15%,#22202b 0,transparent 42%),radial-gradient(ellipse at 0% 30%,#17131b 0,transparent 38%),var(--bg);color:var(--text);font:15px/1.5 Inter,ui-sans-serif,system-ui,-apple-system,Segoe UI,sans-serif}.app{max-width:1440px;margin:auto;padding:28px}.top{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;padding:10px 0 24px;border-bottom:1px solid #ffffff12}.row{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}.brand{font-weight:950;letter-spacing:1.5px;font-size:24px}.brand span{display:inline-grid;place-items:center;background:linear-gradient(135deg,var(--accent2),#a30e25);color:white;border-radius:14px;width:48px;height:48px;margin-right:12px;box-shadow:0 8px 24px #ef233c38}.layout{display:grid;grid-template-columns:230px minmax(0,1fr);gap:26px;margin-top:24px}.side{align-self:start;position:sticky;top:18px;background:#0d1118b8;backdrop-filter:blur(18px);border:1px solid #ffffff10;border-radius:22px;padding:14px;box-shadow:var(--shadow)}.side button{display:block;width:100%;text-align:left;margin:5px 0;background:transparent;color:#aab4c4;border:1px solid transparent;padding:13px 15px;border-radius:13px;font-weight:650;transition:.2s}.side button:hover,.side button:focus{background:#ef233c18;color:white;border-color:#ef233c35;transform:translateX(2px)}button{cursor:pointer;border:0;border-radius:12px;padding:11px 16px;background:linear-gradient(135deg,var(--accent2),#d20f2b);color:white;font-weight:800;box-shadow:0 8px 22px #ef233c25;transition:transform .18s,filter .18s}button:hover{filter:brightness(1.1);transform:translateY(-1px)}button.alt{background:#171d27;color:#e7ebf3;border:1px solid #303846;box-shadow:none}input,select,textarea{width:100%;padding:13px 14px;background:#0a0d13;border:1px solid #303744;border-radius:12px;color:white;outline:none}input:focus,select:focus,textarea:focus{border-color:#ef5267;box-shadow:0 0 0 3px #ef233c18}label{display:block;color:var(--muted);margin:14px 0 7px;font-size:13px;font-weight:650}.card,.hero{background:linear-gradient(145deg,#141923ed,#0e1219ed);border:1px solid #ffffff12;border-radius:22px;padding:23px;box-shadow:var(--shadow)}.hero{position:relative;overflow:hidden;background:radial-gradient(ellipse at 88% 10%,#ef233c2b,transparent 38%),linear-gradient(125deg,#191b25,#10131a 65%);margin-bottom:20px;padding:30px}.hero:after{content:'🎯';position:absolute;right:35px;top:10px;font-size:95px;opacity:.09;transform:rotate(-18deg)}.hero small{color:#ff6577;letter-spacing:2.5px;font-weight:850}.hero h1{font-size:clamp(30px,4vw,48px);line-height:1.1;letter-spacing:-1.5px;margin:12px 0}.muted{color:var(--muted)}.stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-bottom:20px}.stat{padding:20px;background:linear-gradient(145deg,#151a24,#10141b);border:1px solid #ffffff12;border-radius:18px}.stat strong{display:block;font-size:32px;letter-spacing:-1px;margin-top:3px}.item{background:linear-gradient(110deg,#171c26,#10141b);border:1px solid #ffffff12;border-radius:16px;padding:17px;margin-top:12px;transition:border-color .2s,transform .2s}.item:hover{border-color:#ef526744;transform:translateY(-1px)}.hidden{display:none!important}.notice{padding:13px 16px;border-radius:13px;background:#14251f;border:1px solid #31d58330;margin:14px 0}.error{background:#32151b;border-color:#ef233c55}.formgrid{display:grid;grid-template-columns:1fr 1fr;gap:0 14px}.full{grid-column:1/-1}.tag{color:#ff7b8a;font-size:11px;letter-spacing:1px;font-weight:850;padding:5px 9px;border-radius:99px;background:#ef233c15;border:1px solid #ef233c28}.share{overflow-wrap:anywhere;color:#ff7181}.history-head{margin-top:26px;border-top:1px solid #ffffff12;padding-top:18px}.bracket{display:flex;gap:18px;overflow-x:auto;padding:8px 2px 16px;align-items:flex-start}.bracket-round{min-width:245px;display:flex;flex-direction:column;gap:14px}.bracket-round h3{font-size:12px;color:#ff7382;text-transform:uppercase;letter-spacing:1.8px}.match-card{background:#0b0e14;border:1px solid #2b303b;border-radius:16px;padding:12px;box-shadow:0 10px 28px #0003}.match-label{font-size:10px;color:var(--muted);letter-spacing:1.5px;margin-bottom:8px}.bracket-player{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:11px;background:#171c26;border:1px solid #ffffff08;border-radius:10px;margin:5px 0}.bracket-player.winner{outline:1px solid #31d583;background:#10251e;color:#65e6a4}.pick-winner{padding:7px 9px;font-size:11px;white-space:nowrap}.match-result{font-size:12px;color:#31d583;margin-top:8px}.actions{margin-top:10px}.tourney-status{display:flex;align-items:center;gap:7px;font-size:12px;margin-top:8px;color:var(--muted)}.status-dot{width:7px;height:7px;border-radius:50%;display:inline-block;background:#31d583;box-shadow:0 0 12px #31d583}.status-done{color:var(--gold)}.champion-chip{display:inline-flex;align-items:center;gap:7px;border:1px solid #ffc85755;background:linear-gradient(110deg,#ffc8571c,#ffc85708);border-radius:10px;padding:7px 11px;margin-top:8px;color:#ffd778;font-size:12px;font-weight:850}.history-head h3{letter-spacing:-.3px}table th{color:#9da8ba;font-size:11px;text-transform:uppercase;letter-spacing:1px;padding:8px 4px;border-bottom:1px solid #ffffff15}table td{border-bottom:1px solid #ffffff0c}@media(max-width:850px){.app{padding:14px}.layout{grid-template-columns:1fr;gap:15px}.side{position:static;display:flex;overflow-x:auto;gap:4px;padding:8px}.side button{white-space:nowrap;width:auto;flex-shrink:0;padding:10px 12px}.stats{grid-template-columns:1fr}.formgrid{grid-template-columns:1fr}.full{grid-column:auto}.hero{padding:23px}.hero:after{right:15px;font-size:65px}.card{padding:17px}.top{padding-bottom:16px}}
+
+/* Improved winner + final presentation */
+.bracket-round:last-child .match-card:has(.match-result) {
+  border: 1px solid #ffc857;
+  background: radial-gradient(ellipse at top, #382a0d 0%, #12151b 68%);
+  box-shadow: 0 0 28px #ffc85718, inset 0 1px 0 #ffc85733;
+}
+.bracket-round:last-child .match-card:has(.match-result)::before {
+  content: "🏆  POBJEDNIK TURNIRA";
+  display:block; text-align:center; color:#ffc857; font-size:11px;
+  font-weight:900; letter-spacing:2px; padding:10px 4px 12px;
+}
+.bracket-round:last-child .match-card:has(.match-result) .match-result {
+  margin-top:10px; padding:12px 10px; border-radius:10px;
+  text-align:center; font-weight:900; font-size:15px; color:#17120a;
+  background:linear-gradient(135deg,#ffe7a0,#ffc857,#d99b24);
+}
+.bracket-player.winner {border-color:#31d583!important;background:linear-gradient(90deg,#0e3325,#14251f)!important;box-shadow:inset 0 0 0 1px #31d58333}
+.bracket-player.winner span {color:#6af0ad;font-weight:800}
+
 </style></head><body><div class="app">
 <header class="top"><div class="brand"><span>🎯</span>BUKSA <span style="display:inline;background:none;color:#ef5267;box-shadow:none;width:auto;height:auto;margin:0;font-size:inherit">LEAGUE</span><div class="muted" style="font-size:10px;letter-spacing:2px;margin-left:54px">DARTS CLUB • TOURNAMENT HUB</div></div><div><span id="status" class="muted">Spajanje…</span> <button class="alt" id="authBtn">Prijava organizatora</button></div></header>
 <div class="layout"><aside class="side"><button onclick="view('home')">▦　Pregled</button><button onclick="view('tournaments')">🏆　Turniri</button><button onclick="view('history')">📚　Povijest</button><button onclick="view('new')">＋　Novi turnir</button><button onclick="view('login')">🔐　Organizator</button></aside><main>
@@ -53,7 +73,56 @@ function renderMatches(t){
   return `<div class="match-card"><div class="match-label">UTAKMICA ${i+1}</div>${player(m.a)}${player(m.b)}${m.winner?`<div class="match-result">Pobjednik: ${esc(m.winner)}</div>`:''}</div>`
  }).join('')}</div>`).join('')+'</div>';
 }
-window.saveWinner=async function(tid,mid,chosen){let t=rows.find(x=>x.id===tid);if(!t||!user||t.owner_id!==user.id){msg('Samo vlasnik turnira može unositi rezultate.',true);return}let d=JSON.parse(JSON.stringify(t.tournament_data||{}));d.bracket=Array.isArray(d.bracket)?d.bracket:[];let m=d.bracket.find(x=>x.id===mid);if(!m)return;let w=chosen||el('winner-'+mid)?.value;if(![m.a,m.b].includes(w)){msg('Ne mogu odrediti pobjednika ove utakmice.',true);return}m.winner=w;let r=roundOf(m);let current=d.bracket.filter(x=>roundOf(x)===r);if(current.every(x=>x.winner)){let nextRound=r+1;if(!d.bracket.some(x=>roundOf(x)===nextRound)){let winners=current.map(x=>x.winner);for(let i=0;i<winners.length;i+=2){if(i+1<winners.length)d.bracket.push({id:`r${nextRound}m${Math.floor(i/2)}`,a:winners[i],b:winners[i+1],winner:null});else d.bracket.push({id:`r${nextRound}m${Math.floor(i/2)}`,a:winners[i],b:null,winner:winners[i]})}}if(current.length===1)d.champion=current[0].winner;}let {error}=await db.from('tournaments').update({tournament_data:d}).eq('id',tid).eq('owner_id',user.id);if(error){msg('Rezultat nije spremljen: '+error.message,true);return}t.tournament_data=d;render();openT(tid);msg('Pobjednik je spremljen, a ždrijeb ažuriran.')};
+function recomputeBracket(d){
+  let ms=Array.isArray(d.bracket)?d.bracket:[];
+  const roundNum=m=>roundOf(m);
+  // Keep round 0 participants; derive all later rounds from the immediately preceding round.
+  const first=ms.filter(m=>roundNum(m)===0).sort((a,b)=>Number(String(a.id).split('m')[1])-Number(String(b.id).split('m')[1]));
+  let rebuilt=first.map(m=>({...m}));
+  let current=rebuilt;
+  let r=0;
+  while(current.length>1 && r<5){
+    const complete=current.every(m=>!!m.winner);
+    const nextR=r+1;
+    let next=ms.filter(m=>roundNum(m)===nextR).sort((a,b)=>Number(String(a.id).split('m')[1])-Number(String(b.id).split('m')[1])).map(m=>({...m}));
+    const expected=Math.ceil(current.length/2);
+    if(next.length!==expected) next=Array.from({length:expected},(_,i)=>({id:`r${nextR}m${i}`,a:null,b:null,winner:null}));
+    next=next.map((m,i)=>{
+      const a=current[i*2]?.winner || (current[i*2]?.a && current[i*2]?.a===current[i*2]?.b ? current[i*2].a : null);
+      const b=current[i*2+1]?.winner || (current[i*2+1]?.a && current[i*2+1]?.a===current[i*2+1]?.b ? current[i*2+1].a : null);
+      // Clear any result if upstream participants changed; never retain stale winners.
+      if(m.a!==a || m.b!==b) return {...m,a,b,winner:(a && b && m.winner && [a,b].includes(m.winner))?m.winner:null};
+      if(!a || !b) return {...m,a,b,winner:null};
+      return {...m,a,b,winner:m.winner && [a,b].includes(m.winner)?m.winner:null};
+    });
+    if(complete){
+      // Round is ready; next round participants are now known.
+    }
+    rebuilt=rebuilt.filter(m=>roundNum(m)<=r).concat(next);
+    current=next; r=nextR;
+    if(!complete) break;
+  }
+  d.bracket=rebuilt;
+  const finals=rebuilt.filter(m=>roundNum(m)===r);
+  d.champion=(finals.length===1 && finals[0].winner && finals[0].a && finals[0].b)?finals[0].winner:null;
+  return d;
+}
+window.saveWinner=async function(tid,mid,chosen){
+  let t=rows.find(x=>x.id===tid);
+  if(!t||!user||t.owner_id!==user.id){msg('Samo vlasnik turnira može unositi rezultate.',true);return}
+  let d=JSON.parse(JSON.stringify(t.tournament_data||{}));
+  d.bracket=Array.isArray(d.bracket)?d.bracket:[];
+  let m=d.bracket.find(x=>x.id===mid);
+  if(!m)return;
+  if(![m.a,m.b].includes(chosen)){msg('Ne mogu odrediti pobjednika ove utakmice.',true);return}
+  m.winner=chosen;
+  d=recomputeBracket(d);
+  let {error}=await db.from('tournaments').update({tournament_data:d}).eq('id',tid).eq('owner_id',user.id);
+  if(error){msg('Rezultat nije spremljen: '+error.message,true);return}
+  t.tournament_data=d;
+  render();openT(tid);
+  msg(d.champion?'🏆 Finale završeno! Pobjednik: '+d.champion:'Rezultat spremljen. Ždrijeb je ažuriran.');
+};
 
 window.shareT=async c=>{let u=location.origin+location.pathname+'?share='+encodeURIComponent(c);try{await navigator.clipboard.writeText(u);msg('Link kopiran: '+u)}catch{prompt('Kopiraj link',u)}};
 async function init(){await sync();let c=new URLSearchParams(location.search).get('share');if(c){let t=rows.find(x=>x.share_code===c);if(t)openT(t.id);else msg('Turnir nije dostupan javnosti ili pravila baze ne dopuštaju pristup.',true)}}
